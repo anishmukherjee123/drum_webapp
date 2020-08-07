@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt" // allows interaction with html template
+	// allows interaction with html template
+	"fmt"
 	"log"
 	"net/http" // access to core go http functionality
 	"os"
@@ -59,6 +60,8 @@ func main() {
 	// initialize the speaker with the sample rate and buffer size
 	// only need to call this once, at the beginning of the program, otherwise, if called multiple times, cannot play multiple sounds at once
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+
+	// speaker.Play(streamer)
 
 	// start the server, open the port to 4200, without a path it assumes localhost
 	fmt.Println("Listening")
