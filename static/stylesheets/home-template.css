@@ -1,0 +1,18 @@
+body {
+  min-height: 100%;
+  background-color: antiquewhite;
+  min-width: 100%;
+}
+
+.welcome {
+  font-family: 'Segoe UI', 'Tahoma', 'Geneva', Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 3rem;
+  color: black;
+}
+
+.center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
