@@ -11,13 +11,15 @@
   <div class="welcome center">Welcome {{.Name}}!</div>
   <br>
   <script>
-    function play() {
-      var audio = document.getElementById("audio")
+    var audio = new Audio();
+    function play(file) {
+      audio.pause();
+      audio = new Audio(file);
       audio.play();
     }
   </script>
-  <input type="button" value="Play Audio" onclick="play()">
-  <audio id="audio" src="../static/audio/Alesis-Fusion-Tubular-Bells-C6.wav"></audio>
+  <input type="button" value="Play Audio" onclick="play('../static/audio/Alesis-Fusion-Tubular-Bells-C6.wav')">
+  <audio id="audio" src=""></audio>
 </body>
 
 </html>
