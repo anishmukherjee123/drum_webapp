@@ -4,21 +4,15 @@
 
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="../static/stylesheets/welcome-template.css">
+  <link rel="stylesheet" href="../static/stylesheets/home-template.css">
 </head>
 
 <body>
-  <div class="welcome center">Welcome {{.Name}}, it is {{.Time}}</div>
-
-  <form>
-    <div class="name input">
-      <br>
-      <label for="name">Enter Name:</label>
-      <input type="text" id="name" name="name">
-      <br>
-    </div>
-  </form>
-
+  <div class="welcome center">Welcome {{.Name}}!</div>
+  <br>
+  <button type="playButton">
+    Play Audio
+  </button>
 </body>
 
 </html>
