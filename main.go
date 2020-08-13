@@ -1,13 +1,14 @@
 package main
 
 import (
-	// allows interaction with html template
 	"fmt"
 	"log"
-	"net/http" // access to core go http functionality
+	"net/http"
 	"os"
 	"text/template"
 	"time"
+
+	"github.com/faiface/beep"
 
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/beep/wav"
@@ -16,6 +17,32 @@ import (
 // Welcome type made for testing
 type Welcome struct {
 	Name string
+}
+
+// function to log errors
+func checkError(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+// function to open an audio file and return a streamer
+// needs to be provided a filepath
+func getStreamer(filepath string) (beep.StreamSeekCloser, beep.Format) {
+	f, err := os.Open(filepath)
+	checkError(err)
+	// assign a streamer and format to the wav file that can decode when necessary
+	// streamer - can decode and play the audio file, stateful, meaning that once it has been streamed, it cannot be streamed again until reset
+	// format - stores info about the audio file, namely, the sample rate
+	streamer, format, err2 := wav.Decode(f)
+	checkError(err2)
+	return streamer, format
+}
+
+// function to play an audio file given the filepath and a pre-initialized speaker
+func playAudio(filepath string) {
+	streamer, _ := getStreamer(filepath)
+	speaker.Play(streamer)
 }
 
 func main() {
@@ -40,30 +67,19 @@ func main() {
 		}
 	})
 
-	//---------------- LEARNING AUDIO STUFF --------------------------------
-
-	// open the audio file
-	f, err := os.Open("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// assign a streamer and format to the wav file that can decode when necessary
-	// streamer - can decode and play the audio file, stateful, meaning that once it has been streamed, it cannot be streamed again until reset
-	// format - stores info about the audio file, namely, the sample rate
-	streamer, format, err := wav.Decode(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer streamer.Close()
-
-	// initialize the speaker with the sample rate and buffer size
-	// only need to call this once, at the beginning of the program, otherwise, if called multiple times, cannot play multiple sounds at once
+	// initialize the speaker with the sample rate and buffer size with one of the samples in the library
+	_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-	// speaker.Play(streamer)
+	// what to do on the callme page
+	http.HandleFunc("/callme", func(w http.ResponseWriter, r *http.Request) {
+		// play the audio corresponding to the filepath
+		playAudio("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
+		// log the action
+		fmt.Println("Play Audio")
+	})
 
 	// start the server, open the port to 4200, without a path it assumes localhost
-	fmt.Println("Listening")
+	fmt.Println("Listening...")
 	fmt.Println(http.ListenAndServe(":4200", nil))
 }

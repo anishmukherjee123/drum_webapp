@@ -5,6 +5,7 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="../static/stylesheets/home-template.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 </head>
 
 <body>
@@ -20,6 +21,24 @@
   </script>
   <input type="button" value="Play Audio" onclick="play('../static/audio/Alesis-Fusion-Tubular-Bells-C6.wav')">
   <audio id="audio" src=""></audio>
+  <br>
+
+  <button id="callGo" type="submit">Test</button>
+  <!-- Send a request through AJAX to the GOlang backend for an audio file -->
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#callGo").on('click', function () {
+        $.ajax({
+          url: "http://localhost:4200/callme",
+          method: "GET",
+          success: function (data) {
+            $("#response").html(data);
+          },
+        });
+      });
+    });
+  </script>
+
 </body>
 
 </html>
