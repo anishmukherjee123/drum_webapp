@@ -39,6 +39,21 @@
     });
   </script>
 
+  <button id="multiNoise" type="submit">Multiple Sounds</button>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#multiNoise").on('click', function () {
+        $.ajax({
+          url: "http://localhost:4200/multiNoise",
+          method: "GET",
+          success: function (data) {
+            $("#response").html(data);
+          },
+        });
+      });
+    });
+  </script>
+
 </body>
 
 </html>
