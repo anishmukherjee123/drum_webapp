@@ -53,7 +53,47 @@
       });
     });
   </script>
+  <br>
 
+  <form id="sequence" action="http://localhost:4200/fillForm">
+    <input type="checkbox" id="kick1" name="drums" value="static/audio/drums/kick/kick.wav">
+    <label for="kick1">Kick1</label>
+    <input type="checkbox" id="snare1" name="drums" value="static/audio/drums/snare/snare909.wav">
+    <label for="snare1">Snare1</label>
+    <input type="checkbox" id="kick2" name="drums" value="static/audio/drums/kick/kick.wav">
+    <label for="kick2">Kick2</label>
+    <input type="checkbox" id="snare2" name="drums" value="static/audio/drums/snare/snare909.wav">
+    <label for="snare2">Snare2</label>
+    <input type="submit" value="Play Drums">
+  </form>
+  <!-- <script type="text/javascript">
+    $(document).ready(function () {
+      $("#sequence").on('submit', function () {
+        $.ajax({
+          url: "http://localhost:4200/fillForm",
+          method: "GET",
+          success: function (data) {
+            $("#response").html(data);
+          },
+        });
+      });
+    });
+  </script> -->
+
+  <button id="playDrums" type="submit">Play Drum Pattern</button>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#playDrums").on('click', function () {
+        $.ajax({
+          url: "http://localhost:4200/playDrums",
+          method: "GET",
+          success: function (data) {
+            $("#response").html(data);
+          },
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>
