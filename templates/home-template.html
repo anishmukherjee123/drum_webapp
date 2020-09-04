@@ -55,29 +55,39 @@
   </script>
   <br>
 
+  <!-- change all of the hidden filters to a single script and repeat -->
   <form id="sequence" action="http://localhost:4200/fillForm">
-    <input type="checkbox" id="kick1" name="drums" value="static/audio/drums/kick/kick.wav">
-    <label for="kick1">Kick1</label>
-    <input type="checkbox" id="snare1" name="drums" value="static/audio/drums/snare/snare909.wav">
-    <label for="snare1">Snare1</label>
-    <input type="checkbox" id="kick2" name="drums" value="static/audio/drums/kick/kick.wav">
-    <label for="kick2">Kick2</label>
-    <input type="checkbox" id="snare2" name="drums" value="static/audio/drums/snare/snare909.wav">
-    <label for="snare2">Snare2</label>
+    <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
+    <label for="kick1">Kick</label>
+    <input type="hidden" id="kick1" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
+    <input type="hidden" id="kick1" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
+    <input type="hidden" id="kick1" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
+    <br>
+    <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
+    <label for="snare1">Snare</label>
+    <input type="hidden" id="kick1" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
+    <input type="hidden" id="kick1" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
+    <input type="hidden" id="kick1" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
     <input type="submit" value="Play Drums">
   </form>
+
   <!-- <script type="text/javascript">
+    // when page is ready
     $(document).ready(function () {
+      // on form submit
       $("#sequence").on('submit', function () {
-        $.ajax({
-          url: "http://localhost:4200/fillForm",
-          method: "GET",
-          success: function (data) {
-            $("#response").html(data);
-          },
-        });
-      });
-    });
+        // to each unchecked checkbox
+        $(this).find('input[type=checkbox]:not(:checked)').prop('checked', true).val("static/audio/drums/fx/80s.wav");
+      })
+    })
   </script> -->
 
   <button id="playDrums" type="submit">Play Drum Pattern</button>
@@ -86,6 +96,23 @@
       $("#playDrums").on('click', function () {
         $.ajax({
           url: "http://localhost:4200/playDrums",
+          method: "GET",
+          success: function (data) {
+            $("#response").html(data);
+          },
+        });
+      });
+    });
+  </script>
+
+  <br>
+
+  <button id="testMixer" type="submit">Test Mixer</button>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#testMixer").on('click', function () {
+        $.ajax({
+          url: "http://localhost:4200/testMixer",
           method: "GET",
           success: function (data) {
             $("#response").html(data);

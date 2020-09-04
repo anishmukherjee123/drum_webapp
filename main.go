@@ -21,11 +21,11 @@ type Welcome struct {
 
 // type to hold a queue of drum samples
 type Queue struct {
-	streamers []beep.StreamSeekCloser
+	streamers []beep.Streamer
 }
 
 // function to add something to the queue of streamers
-func (q *Queue) Add(streamers []beep.StreamSeekCloser) {
+func (q *Queue) Add(streamers []beep.Streamer) {
 	q.streamers = append(q.streamers, streamers...)
 }
 
@@ -79,7 +79,7 @@ func checkIfExists(filepath string) {
 
 // function to open an audio file and return a streamer
 // needs to be provided a filepath
-func getStreamer(filepath string) (beep.StreamSeekCloser, beep.Format) {
+func getStreamer(filepath string) (beep.Streamer, beep.Format) {
 	f, err := os.Open(filepath)
 	checkError(err)
 	// assign a streamer and format to the wav file that can decode when necessary
@@ -95,12 +95,11 @@ func playAudio(filepath string) {
 	streamer, _ := getStreamer(filepath)
 	// play the sound
 	speaker.Play(streamer)
-	streamer.Seek(0)
 }
 
 // function to return an array of streamers based on their filepaths
-func getStreamers(filepaths ...string) []beep.StreamSeekCloser {
-	streamerArray := make([]beep.StreamSeekCloser, len(filepaths))
+func getStreamers(filepaths ...string) []beep.Streamer {
+	streamerArray := make([]beep.Streamer, len(filepaths))
 	for i := 0; i < len(streamerArray); i++ {
 		checkIfExists(filepaths[i])
 		streamer, _ := getStreamer(filepaths[i])
@@ -108,6 +107,30 @@ func getStreamers(filepaths ...string) []beep.StreamSeekCloser {
 	}
 	return streamerArray
 }
+
+// function to remove a certain index from a slice
+func removeIndex(s []string, index int) []string {
+	return append(s[:index], s[index+1:]...)
+}
+
+// // function that removes silences from the form input if there is a non-silent element directly after it
+// func removeInvalidHidden(form url.Values, key string) []string {
+// 	// construct an array of string values from the url.Values
+// 	formValue := []string{form.Get("1")
+
+// 	var resultArray []string
+// 	copy(resultArray, formValue)
+// 	keyCounter := 0
+// 	for i := 0; i < len(formValue); i++ {
+// 		if keyCounter != 0 && formValue[i] != key {
+// 			keyCounter = 0
+// 			removeIndex(resultArray, i-1)
+// 		} else if formValue[i] == key {
+// 			keyCounter++
+// 		}
+// 	}
+// 	return resultArray
+// }
 
 func main() {
 
@@ -161,8 +184,7 @@ func main() {
 		speaker.Play(&queue)
 	})
 
-	drumsSelected := []string{}
-
+	// playing drums based on the checkboxes ticked, creating a mixer for each row of checkboxes
 	http.HandleFunc("/fillForm", func(w http.ResponseWriter, r *http.Request) {
 		// if there is an error while executing the home page template, print it
 		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
@@ -170,33 +192,48 @@ func main() {
 		}
 		r.ParseForm()
 		fmt.Printf("%+v\n", r.Form)
-		drumsSelected = append(drumsSelected, r.Form["drums"]...)
-		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
+		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
 		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
 		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-		// get the corresponding streamers
-		streamerArray := getStreamers(drumsSelected...)
+		// check if any of the beats are empty, and if they are, include silence to fill the beat
+
+		// get the corresponding streamers and create a mixed streamer on each beat
+		// this needs to change dynamically
+		streamer1Mix := beep.Mix(getStreamers(r.Form["1"]...)...)
+		streamer2Mix := beep.Mix(getStreamers(r.Form["2"]...)...)
+		streamer3Mix := beep.Mix(getStreamers(r.Form["3"]...)...)
+		streamer4Mix := beep.Mix(getStreamers(r.Form["4"]...)...)
+		mixedStreamer := []beep.Streamer{streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix}
 
 		// add them to a queue depending on which checkboxes are ticked and play the queue
 		var queue Queue
-		queue.Add(streamerArray)
+		queue.Add(mixedStreamer)
 		speaker.Play(&queue)
 	})
 
-	// playing a drum pattern based on the checkboxes ticked
 	http.HandleFunc("/playDrums", func(w http.ResponseWriter, r *http.Request) {
+		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
+		// _, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
+		// speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
+
+		// // get the corresponding streamers
+		// streamerArray := getStreamers(drumsSelected...)
+
+		// // add them to a queue depending on which checkboxes are ticked and play the queue
+		// var queue Queue
+		// queue.Add(streamerArray)
+		// speaker.Play(&queue)
+	})
+
+	// playing multiple sounds at once using the mixer type in the beep library
+	http.HandleFunc("/testMixer", func(w http.ResponseWriter, r *http.Request) {
 		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
 		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
 		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-		// get the corresponding streamers
-		streamerArray := getStreamers(drumsSelected...)
-
-		// add them to a queue depending on which checkboxes are ticked and play the queue
-		var queue Queue
-		queue.Add(streamerArray)
-		speaker.Play(&queue)
+		mixedStreamer := beep.Mix(getStreamers("static/audio/drums/snare/snare909.wav", "static/audio/drums/kick/kick.wav")...)
+		speaker.Play(mixedStreamer)
 	})
 
 	// start the server, open the port to 4200, without a path it assumes localhost
