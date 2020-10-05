@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/faiface/beep"
-
 	"github.com/faiface/beep/speaker"
 	"github.com/faiface/beep/wav"
 )
@@ -224,9 +223,11 @@ func main() {
 		// var queue Queue
 		// queue.Add(streamerArray)
 		// speaker.Play(&queue)
+		// adding a test line here for git
 	})
 
 	// playing multiple sounds at once using the mixer type in the beep library
+	// currently creates a new page that handles the form request of playing audio
 	http.HandleFunc("/testMixer", func(w http.ResponseWriter, r *http.Request) {
 		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
 		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
