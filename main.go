@@ -153,36 +153,6 @@ func main() {
 		}
 	})
 
-	// what to do on the callme page
-	http.HandleFunc("/callme", func(w http.ResponseWriter, r *http.Request) {
-		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
-		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
-		// play the audio corresponding to the filepath
-		playAudio("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		// log the action
-		fmt.Println("Play Audio")
-	})
-
-	// multiple noises played after each other
-	http.HandleFunc("/multiNoise", func(w http.ResponseWriter, r *http.Request) {
-		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
-		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
-		// get all of the streamers necessary
-		streamerArray := getStreamers("static/audio/drums/kick/kick.wav",
-			"static/audio/drums/snare/snare909.wav", "static/audio/drums/kick/kick.wav", "static/audio/drums/snare/snare909.wav")
-		// pattern of a drum and a snare for a measure
-		// (kick snare kick snare)
-
-		// add them to a queue and play the queue
-		var queue Queue
-		queue.Add(streamerArray)
-		speaker.Play(&queue)
-	})
-
 	// playing drums based on the checkboxes ticked, creating a mixer for each row of checkboxes
 	http.HandleFunc("/fillForm", func(w http.ResponseWriter, r *http.Request) {
 		// if there is an error while executing the home page template, print it
@@ -237,5 +207,5 @@ func main() {
 
 	// start the server, open the port to 4200, without a path it assumes localhost
 	fmt.Println("Listening...")
-	fmt.Println(http.ListenAndServe(":4200", nil))
+	fmt.Println(http.ListenAndServe("https://anishmukherjee123.github.io/drum_webapp/", nil))
 }
