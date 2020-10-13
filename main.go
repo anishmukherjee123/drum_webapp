@@ -230,8 +230,6 @@ func main() {
 	// currently creates a new page that handles the form request of playing audio
 	http.HandleFunc("/testMixer", func(w http.ResponseWriter, r *http.Request) {
 		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
-		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
 		mixedStreamer := beep.Mix(getStreamers("static/audio/drums/snare/snare909.wav", "static/audio/drums/kick/kick.wav")...)
 		speaker.Play(mixedStreamer)

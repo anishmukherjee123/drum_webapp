@@ -1,13 +1,81 @@
 body {
   min-height: 100%;
-  background-color: antiquewhite;
+  background-color: lightgray;
   min-width: 100%;
 }
 
-.welcome {
-  font-family: 'Segoe UI', 'Tahoma', 'Geneva', Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 3rem;
+label {
+  float: left;
+  position: absolute;
+  padding-right: 50px;
+  padding-left: 10px;
+  padding-top: 26px;
+  white-space: nowrap;
+  font-family: 'Arial';
+  font-size: x-large;
+  font-weight: bold;
+  text-align: center;
   color: black;
+}
+
+.sequence {
+  margin-left: 400px;
+  margin-top: 200px;
+  border-style: solid;
+  position: absolute;
+  width: 50%;
+  background: lightblue;
+  height: 500px;
+}
+
+.class_checkbox {
+  width: 50px;
+  height: 70px;
+  display: inline-block;
+  background-color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 15px;
+}
+
+.class_checkbox:hover {
+  box-shadow: 0px 0px 1px;
+}
+
+.class_checkbox.checked {
+  background-color: #db604d;
+}
+
+.row1 {
+  width: 100%;
+  padding-left: 100px; 
+  padding-top: 15px;
+  margin: auto;
+  background-color: ;
+}
+
+.row2 {
+  width: 100%;
+  padding-left: 100px;
+  padding-bottom: 10px;
+  background-color: none;
+  margin: auto;
+}
+
+.submitButton {
+  font-family: 'Arial';
+  font-size: medium;
+  height: 50px;
+  border-style: solid;
+  border-color: black;
+  border-radius: 10px;
+  background-color: #aeb9d1;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+  position: absolute;
+  margin-left: 10px;
+  margin-top: 30px;
 }
 
 .center {

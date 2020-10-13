@@ -6,91 +6,53 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="../static/stylesheets/home-template.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- <script src="../js/checkbox.js"></script> -->
 </head>
 
 <body>
-  <div class="welcome center">Welcome {{.Name}}!</div>
-  <br>
-  <script>
-    var audio = new Audio();
-    function play(file) {
-      audio.pause();
-      audio = new Audio(file);
-      audio.play();
-    }
-  </script>
-  <input type="button" value="Play Audio" onclick="play('../static/audio/Alesis-Fusion-Tubular-Bells-C6.wav')">
-  <audio id="audio" src=""></audio>
-  <br>
-
-  <button id="callGo" type="submit">Test</button>
-  <!-- Send a request through AJAX to the GOlang backend for an audio file -->
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("#callGo").on('click', function () {
-        $.ajax({
-          url: "http://localhost:4200/callme",
-          method: "GET",
-          success: function (data) {
-            $("#response").html(data);
-          },
-        });
-      });
-    });
-  </script>
-
-  <button id="multiNoise" type="submit">Multiple Sounds</button>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("#multiNoise").on('click', function () {
-        $.ajax({
-          url: "http://localhost:4200/multiNoise",
-          method: "GET",
-          success: function (data) {
-            $("#response").html(data);
-          },
-        });
-      });
-    });
-  </script>
-  <br>
-
-  <!-- change all of the hidden filters to a single script and repeat -->
-  <form id="sequence" action="http://localhost:4200/fillForm">
-    <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
-    <label for="kick1">Kick</label>
-    <input type="hidden" id="kick1" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
-    <input type="hidden" id="kick1" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
-    <input type="hidden" id="kick1" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'">
+  <!-- form with all of the checkboxes to enter drum pattern -->
+  <form class="sequence" action="http://localhost:4200/fillForm">
+    <label for="row1" form="sequence">Kick</label>
+    <div class="row1">
+      <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'" class="input_class_checkbox">
+      <input type="hidden" id="kick2" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'" class="input_class_checkbox">
+      <input type="hidden" id="kick3" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'" class="input_class_checkbox">
+      <input type="hidden" id="kick4" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/kick/kick.wav'" class="input_class_checkbox">
+    </div>
     <br>
-    <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
-    <label for="snare1">Snare</label>
-    <input type="hidden" id="kick1" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
-    <input type="hidden" id="kick1" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
-    <input type="hidden" id="kick1" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
-      onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'">
-    <input type="submit" value="Play Drums">
+    <label for="row2" form="sequence">Snare</label>
+    <div class="row2">
+      <input type="hidden" id="snare1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
+      <input type="hidden" id="snare2" name="2" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
+      <input type="hidden" id="snare3" name="3" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
+      <input type="hidden" id="snare4" name="4" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
+        onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
+      <br>
+    </div>
+    <input type="submit" class="submitButton" value="Play Drums">
   </form>
 
-  <!-- <script type="text/javascript">
-    // when page is ready
-    $(document).ready(function () {
-      // on form submit
-      $("#sequence").on('submit', function () {
-        // to each unchecked checkbox
-        $(this).find('input[type=checkbox]:not(:checked)').prop('checked', true).val("static/audio/drums/fx/80s.wav");
-      })
-    })
-  </script> -->
+  <!-- Script to assign a different class to checkboxes that has custom images -->
+  <script>
+    // Create a hidden object to customize with CSS
+    $('.input_class_checkbox').each(function(){
+      $(this).hide().after('<div class="class_checkbox" />');
+    });
 
-  <button id="playDrums" type="submit">Play Drum Pattern</button>
+    // Change the value of the box to checked
+    $('.class_checkbox').on('click',function(){
+      $(this).toggleClass('checked').prev().prop('checked',$(this).is('.checked')).triggerHandler('click');
+    });
+  </script>
+
+  <!-- <button id="playDrums" type="submit">Play Drum Pattern</button>
   <script type="text/javascript">
     $(document).ready(function () {
       $("#playDrums").on('click', function () {
@@ -103,24 +65,10 @@
         });
       });
     });
-  </script>
+  </script> -->
 
   <br>
 
-  <button id="testMixer" type="submit">Test Mixer</button>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("#testMixer").on('click', function () {
-        $.ajax({
-          url: "http://localhost:4200/testMixer",
-          method: "GET",
-          success: function (data) {
-            $("#response").html(data);
-          },
-        });
-      });
-    });
-  </script>
 </body>
 
 </html>
