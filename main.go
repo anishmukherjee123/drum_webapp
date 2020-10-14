@@ -112,25 +112,6 @@ func removeIndex(s []string, index int) []string {
 	return append(s[:index], s[index+1:]...)
 }
 
-// // function that removes silences from the form input if there is a non-silent element directly after it
-// func removeInvalidHidden(form url.Values, key string) []string {
-// 	// construct an array of string values from the url.Values
-// 	formValue := []string{form.Get("1")
-
-// 	var resultArray []string
-// 	copy(resultArray, formValue)
-// 	keyCounter := 0
-// 	for i := 0; i < len(formValue); i++ {
-// 		if keyCounter != 0 && formValue[i] != key {
-// 			keyCounter = 0
-// 			removeIndex(resultArray, i-1)
-// 		} else if formValue[i] == key {
-// 			keyCounter++
-// 		}
-// 	}
-// 	return resultArray
-// }
-
 func main() {
 
 	// connect the css to the html
@@ -143,12 +124,12 @@ func main() {
 	welcome := Welcome{"Anonymous"}
 
 	// give Go path to the html file and parse
-	templates := template.Must(template.ParseFiles("./templates/home-template.html"))
+	templates := template.Must(template.ParseFiles("./templates/index.html"))
 
 	// what to do on the home page
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// if there is an error while executing the home page template, print it
-		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
+		if err := templates.ExecuteTemplate(w, "index.html", welcome); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
@@ -156,7 +137,7 @@ func main() {
 	// playing drums based on the checkboxes ticked, creating a mixer for each row of checkboxes
 	http.HandleFunc("/fillForm", func(w http.ResponseWriter, r *http.Request) {
 		// if there is an error while executing the home page template, print it
-		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
+		if err := templates.ExecuteTemplate(w, "index.html", welcome); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		r.ParseForm()
@@ -181,31 +162,8 @@ func main() {
 		speaker.Play(&queue)
 	})
 
-	http.HandleFunc("/playDrums", func(w http.ResponseWriter, r *http.Request) {
-		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
-		// _, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		// speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
-		// // get the corresponding streamers
-		// streamerArray := getStreamers(drumsSelected...)
-
-		// // add them to a queue depending on which checkboxes are ticked and play the queue
-		// var queue Queue
-		// queue.Add(streamerArray)
-		// speaker.Play(&queue)
-		// adding a test line here for git
-	})
-
-	// playing multiple sounds at once using the mixer type in the beep library
-	// currently creates a new page that handles the form request of playing audio
-	http.HandleFunc("/testMixer", func(w http.ResponseWriter, r *http.Request) {
-		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
-
-		mixedStreamer := beep.Mix(getStreamers("static/audio/drums/snare/snare909.wav", "static/audio/drums/kick/kick.wav")...)
-		speaker.Play(mixedStreamer)
-	})
-
 	// start the server, open the port to 4200, without a path it assumes localhost
 	fmt.Println("Listening...")
 	fmt.Println(http.ListenAndServe("https://anishmukherjee123.github.io/drum_webapp/", nil))
+	fmt.Println(http.ListenAndServe(":4200", nil))
 }
