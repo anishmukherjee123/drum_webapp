@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"mime"
 	"net/http"
 	"os"
 	"text/template"
 	"time"
+
+	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
@@ -112,26 +115,11 @@ func removeIndex(s []string, index int) []string {
 	return append(s[:index], s[index+1:]...)
 }
 
-// // function that removes silences from the form input if there is a non-silent element directly after it
-// func removeInvalidHidden(form url.Values, key string) []string {
-// 	// construct an array of string values from the url.Values
-// 	formValue := []string{form.Get("1")
-
-// 	var resultArray []string
-// 	copy(resultArray, formValue)
-// 	keyCounter := 0
-// 	for i := 0; i < len(formValue); i++ {
-// 		if keyCounter != 0 && formValue[i] != key {
-// 			keyCounter = 0
-// 			removeIndex(resultArray, i-1)
-// 		} else if formValue[i] == key {
-// 			keyCounter++
-// 		}
-// 	}
-// 	return resultArray
-// }
-
 func main() {
+
+	// set the .wav extension type to audio/wav
+	mime.AddExtensionType(".wav", "audio/wav")
+	mime.AddExtensionType(".js", "applications/javascript")
 
 	// connect the css to the html
 	http.Handle("/static/", // /static/ is the url that html can refer to when looking for css, can be whatever
@@ -147,6 +135,12 @@ func main() {
 
 	// what to do on the home page
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+		// debugging setting mime types
+		file := "templates/output.wav"
+		mime, err := mimetype.DetectFile(file)
+		fmt.Println(mime.String(), mime.Extension(), err)
+
 		// if there is an error while executing the home page template, print it
 		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -155,20 +149,20 @@ func main() {
 
 	// playing drums based on the checkboxes ticked, creating a mixer for each row of checkboxes
 	http.HandleFunc("/fillForm", func(w http.ResponseWriter, r *http.Request) {
+
 		// if there is an error while executing the home page template, print it
 		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
+		// get the value of the form and print the map
 		r.ParseForm()
 		fmt.Printf("%+v\n", r.Form)
 		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
 		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
 		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-		// check if any of the beats are empty, and if they are, include silence to fill the beat
-
 		// get the corresponding streamers and create a mixed streamer on each beat
-		// this needs to change dynamically
 		streamer1Mix := beep.Mix(getStreamers(r.Form["1"]...)...)
 		streamer2Mix := beep.Mix(getStreamers(r.Form["2"]...)...)
 		streamer3Mix := beep.Mix(getStreamers(r.Form["3"]...)...)
@@ -179,33 +173,19 @@ func main() {
 		var queue Queue
 		queue.Add(mixedStreamer)
 		speaker.Play(&queue)
-	})
 
-	http.HandleFunc("/playDrums", func(w http.ResponseWriter, r *http.Request) {
-		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
-		// _, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
-		// speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
-
-		// // get the corresponding streamers
-		// streamerArray := getStreamers(drumsSelected...)
-
-		// // add them to a queue depending on which checkboxes are ticked and play the queue
-		// var queue Queue
-		// queue.Add(streamerArray)
-		// speaker.Play(&queue)
-		// adding a test line here for git
-	})
-
-	// playing multiple sounds at once using the mixer type in the beep library
-	// currently creates a new page that handles the form request of playing audio
-	http.HandleFunc("/testMixer", func(w http.ResponseWriter, r *http.Request) {
-		// initialize the speaker with the sample rate and buffer size with one of the samples in the library
-
-		mixedStreamer := beep.Mix(getStreamers("static/audio/drums/snare/snare909.wav", "static/audio/drums/kick/kick.wav")...)
-		speaker.Play(mixedStreamer)
+		// // update output.wav with a sequence of the new streamers
+		// streamerSequence := beep.Seq(streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix)
+		// f, err := os.Create("./templates/output.wav")
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// w.Header().Set("Content-Type", "audio/wav")
+		// // encode the file
+		// wav.Encode(f, streamerSequence, format)
 	})
 
 	// start the server, open the port to 4200, without a path it assumes localhost
 	fmt.Println("Listening...")
-	fmt.Println(http.ListenAndServe("https://anishmukherjee123.github.io/drum_webapp/", nil))
+	fmt.Println(http.ListenAndServe(":4200", nil))
 }

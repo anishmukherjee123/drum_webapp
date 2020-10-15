@@ -10,8 +10,21 @@
 </head>
 
 <body>
+
+  <audio id="audio" type="audio/wav" preload="auto"> <source src="output.wav" type="audio/wav"> </audio>
+
+  <script>
+    // Play audio
+    function playAudio() {
+      console.log("played audio");
+      // var audio = new Audio('output.wav');
+      var audio = document.getElementById("audio");
+      audio.play();
+    }
+  </script>
+
   <!-- form with all of the checkboxes to enter drum pattern -->
-  <form class="sequence" action="https://anishmukherjee123.github.io/drum_webapp/fillForm">
+  <form class="sequence" action="/fillForm" method="GET">
     <label for="row1" form="sequence">Kick</label>
     <div class="row1">
       <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
@@ -36,7 +49,7 @@
         onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
       <br>
     </div>
-    <input type="submit" class="submitButton" value="Play Drums">
+    <input type="submit" class="submitButton" value="Play Drums" onclick="playAudio()">
   </form>
 
   <!-- Script to assign a different class to checkboxes that has custom images -->
@@ -49,23 +62,10 @@
     // Change the value of the box to checked
     $('.class_checkbox').on('click',function(){
       $(this).toggleClass('checked').prev().prop('checked',$(this).is('.checked')).triggerHandler('click');
+      console.log($(this).prev().val());
     });
   </script>
 
-  <!-- <button id="playDrums" type="submit">Play Drum Pattern</button>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("#playDrums").on('click', function () {
-        $.ajax({
-          url: "http://localhost:4200/playDrums",
-          method: "GET",
-          success: function (data) {
-            $("#response").html(data);
-          },
-        });
-      });
-    });
-  </script> -->
 
   <br>
 
