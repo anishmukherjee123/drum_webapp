@@ -11,20 +11,29 @@
 
 <body>
 
-  <audio id="audio" type="audio/wav" preload="auto"> <source src="output.wav" type="audio/wav"> </audio>
+  <audio id="audio" type="audio/wav"> <source src="../static/audio/output.wav" type="audio/wav"> </audio>
 
   <script>
+    // NEED TO FIND A WAY TO PLAY THE AUDIO ONLY AFTER THE FORM HAS BEEN SUBMITTED AND PROCESSED
+
+    // test script to check if a string exists in a url
+    $(window).on("load",function() {
+      if (window.location.href.indexOf("fillForm") > -1) {
+        playAudio();
+      }
+    });
+
     // Play audio
     function playAudio() {
       console.log("played audio");
       // var audio = new Audio('output.wav');
       var audio = document.getElementById("audio");
-      audio.play();
+      setTimeout(() => {  audio.play(); }, 1000);
     }
   </script>
 
   <!-- form with all of the checkboxes to enter drum pattern -->
-  <form class="sequence" action="/fillForm" method="GET">
+  <form class="sequence" action="/fillForm" method="POST">
     <label for="row1" form="sequence">Kick</label>
     <div class="row1">
       <input type="hidden" id="kick1" name="1" value="static/audio/1_beat_100bpm.wav"><input type="checkbox"
@@ -49,7 +58,7 @@
         onclick="this.previousSibling.value='static/audio/drums/snare/snare909.wav'" class="input_class_checkbox">
       <br>
     </div>
-    <input type="submit" class="submitButton" value="Play Drums" onclick="playAudio()">
+    <input type="submit" class="submitButton" value="Play Drums" >
   </form>
 
   <!-- Script to assign a different class to checkboxes that has custom images -->

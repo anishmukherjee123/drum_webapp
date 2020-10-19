@@ -1,3 +1,4 @@
+// TODO: Checkboxes do not switch back to silence if unchecked
 package main
 
 import (
@@ -8,8 +9,6 @@ import (
 	"os"
 	"text/template"
 	"time"
-
-	"github.com/gabriel-vasile/mimetype"
 
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
@@ -136,10 +135,10 @@ func main() {
 	// what to do on the home page
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-		// debugging setting mime types
-		file := "templates/output.wav"
-		mime, err := mimetype.DetectFile(file)
-		fmt.Println(mime.String(), mime.Extension(), err)
+		// // debugging setting mime types
+		// file := "templates/output.wav"
+		// mime, err := mimetype.DetectFile(file)
+		// fmt.Println(mime.String(), mime.Extension(), err)
 
 		// if there is an error while executing the home page template, print it
 		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
@@ -149,40 +148,47 @@ func main() {
 
 	// playing drums based on the checkboxes ticked, creating a mixer for each row of checkboxes
 	http.HandleFunc("/fillForm", func(w http.ResponseWriter, r *http.Request) {
-
+		// Set the content-type to audio
+		r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		// get the value of the form and print the map
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+		fmt.Println("parsing form")
 		// if there is an error while executing the home page template, print it
 		if err := templates.ExecuteTemplate(w, "home-template.html", welcome); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+		// why is this empty
+		fmt.Printf("%+v\n", r.PostForm)
 
-		// get the value of the form and print the map
-		r.ParseForm()
-		fmt.Printf("%+v\n", r.Form)
 		// // initialize the speaker with the sample rate and buffer size with one of the samples in the library
 		_, format := getStreamer("static/audio/Alesis-Fusion-Tubular-Bells-C6.wav")
 		speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
 		// get the corresponding streamers and create a mixed streamer on each beat
-		streamer1Mix := beep.Mix(getStreamers(r.Form["1"]...)...)
-		streamer2Mix := beep.Mix(getStreamers(r.Form["2"]...)...)
-		streamer3Mix := beep.Mix(getStreamers(r.Form["3"]...)...)
-		streamer4Mix := beep.Mix(getStreamers(r.Form["4"]...)...)
-		mixedStreamer := []beep.Streamer{streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix}
+		streamer1Mix := beep.Mix(getStreamers(r.PostForm["1"]...)...)
+		streamer2Mix := beep.Mix(getStreamers(r.PostForm["2"]...)...)
+		streamer3Mix := beep.Mix(getStreamers(r.PostForm["3"]...)...)
+		streamer4Mix := beep.Mix(getStreamers(r.PostForm["4"]...)...)
+		// mixedStreamer := []beep.Streamer{streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix}
 
 		// add them to a queue depending on which checkboxes are ticked and play the queue
-		var queue Queue
-		queue.Add(mixedStreamer)
-		speaker.Play(&queue)
+		// var queue Queue
+		// queue.Add(mixedStreamer)
+		// speaker.Play(&queue)
 
-		// // update output.wav with a sequence of the new streamers
-		// streamerSequence := beep.Seq(streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix)
-		// f, err := os.Create("./templates/output.wav")
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// w.Header().Set("Content-Type", "audio/wav")
-		// // encode the file
-		// wav.Encode(f, streamerSequence, format)
+		// update output.wav with a sequence of the new streamers
+		streamerSequence := beep.Seq(streamer1Mix, streamer2Mix, streamer3Mix, streamer4Mix)
+		f, err := os.Create("static/audio/output.wav")
+		defer f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+		// encode the file
+		wav.Encode(f, streamerSequence, format)
+
 	})
 
 	// start the server, open the port to 4200, without a path it assumes localhost
